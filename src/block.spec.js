@@ -1,5 +1,5 @@
 import Block from './block';
-import { sha256 } from 'hash.js';
+import sha256 from 'hash.js/lib/hash/sha/256.js';
 
 describe('Block.js', function() {
     const DATA = `The Times 03/Jan/2009
