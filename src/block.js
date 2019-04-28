@@ -1,4 +1,4 @@
-import { sha256 } from 'hash';
+import { sha256 } from 'hash.js';
 
 /**
  * @class Block
