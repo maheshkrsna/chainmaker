@@ -1,8 +1,9 @@
-var webpack = require('webpack');
+var glob = require('glob');
 var path = require('path');
+var webpack = require('webpack');
 
 var webpackConfig = {
-    entry: __dirname + '/src/chainmaker.js',
+    entry: glob.sync('./src/!(*.spec).js'),
     output: {
         path: __dirname + '/lib',
         filename: 'chainmaker.js',
