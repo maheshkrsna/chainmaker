@@ -27,7 +27,9 @@ var webpackConfig = {
                 ]
             }
         ]
-    }
+    },
+    // Add peer dependancy libraries here in the form of 'lodash/find'
+    externals: []
 };
 
 module.exports = webpackConfig;
