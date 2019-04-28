@@ -50,7 +50,6 @@ module.exports = {
         'implicit-arrow-linebreak': ['error', 'beside'],
         'key-spacing': ['error', { 'beforeColon': false, 'afterColon': true }],
         'line-comment-position': ['error', { 'position': 'above' }],
-        'lines-around-comment': ['error', { 'beforeBlockComment': true, 'afterBlockComment': false, 'beforeLineComment': true, 'afterLineComment': false}],
         'max-len': ['error', { 'code': 80 }],
         'max-lines': ['error', {'max': 300, 'skipBlankLines': true, 'skipComments': true}],
         'multiline-ternary': ['error', 'always-multiline'],
