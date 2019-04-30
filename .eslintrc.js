@@ -26,7 +26,7 @@ module.exports = {
         'complexity': ['error', { 'max': 5 }],
         'no-eq-null': 'error',
         'no-eval': 'error',
-        'no-magic-numbers': 'error',
+        'no-magic-numbers': ['error', {'ignore': [0, 1, -1]}],
         'no-multi-spaces': 'error',
         'no-new': 'error',
         'no-param-reassign': 'error',

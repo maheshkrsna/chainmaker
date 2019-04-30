@@ -11,19 +11,28 @@ class Block {
         this.data = data.toString();
         this.previousHash = previousHash;
         this.timeStamp = Date.now();
-        this.hash = this.calculateHash();
+        this.hash = this._generateHash(this.data,
+            this.previousHash, this.timeStamp);
     }
 
     /**
-     * @method calculateHash
+     * @method _generateHash
      * @returns {string} hash generated using sha256
      * @memberof Block
      */
-    calculateHash() {
+    _generateHash() {
+        if (arguments.length === 0) {
+            throw new Error('There is no data to hash');
+        }
+        let dataToHash = '';
+        for (let i = 0; i < arguments.length; i++) {
+            dataToHash += arguments[i];
+        }
         let hash = sha256()
-            .update(this.previousHash + this.data + this.timeStamp)
+            .update(dataToHash)
             .digest('hex')
             .toString();
+
         return hash;
     }
 }

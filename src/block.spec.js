@@ -22,7 +22,7 @@ describe('Block.js', function() {
         });
         it('Should calculate and assign hash onto Block Object', function() {
             const GENERATED_HASH = sha256()
-                .update(PREVIOUS_HASH + DATA + Date.now())
+                .update(DATA + PREVIOUS_HASH + Date.now())
                 .digest('hex')
                 .toString();
 
