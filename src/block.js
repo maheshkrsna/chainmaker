@@ -7,12 +7,27 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
  * @param {string} previousHash Hash of the previous Block in the chain
  */
 class Block {
-    constructor(data, previousHash) {
-        this.data = data.toString();
-        this.previousHash = previousHash;
-        this.timeStamp = Date.now();
-        this.hash = this._generateHash(this.data,
-            this.previousHash, this.timeStamp);
+
+    /**
+     *
+     * @method _createBlock
+     * @memberof Block
+     * @private
+     * @param {String} previousHash Hash of previous Block
+     * @param {String} data Data to be stored in the Block
+     * @param {Number} nonce Random number that is used for Proof of work
+     * @returns {Object} Block of a Blockchain
+     */
+    _createBlock(previousHash, data, nonce) {
+        let block = {};
+        block.previousHash = previousHash;
+        block.data = data;
+        block.timeStamp = Date.now();
+        block.nonce = nonce;
+        block.hash = this._generateHash(block.previousHash, block.data,
+            block.timeStamp, block.nonce);
+
+        return block;
     }
 
     /**
@@ -37,4 +52,4 @@ class Block {
     }
 }
 
-export default Block;
+export default new Block();
