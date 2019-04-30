@@ -101,4 +101,4 @@ class Transaction {
     }
 }
 
-export default Transaction;
+export default new Transaction();

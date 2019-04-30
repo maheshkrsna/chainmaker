@@ -2,7 +2,6 @@ import Transaction from './transaction';
 import elliptic from 'elliptic';
 
 describe('Transaction.js', function() {
-    let transaction = new Transaction();
     let EllipticCryptography = elliptic.ec;
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
@@ -20,7 +19,7 @@ describe('Transaction.js', function() {
 
     describe('Create Transaction', function() {
         it('Should create a new Transaction Object', function() {
-            let transactionObject = transaction.createTransaction(FROM_ADDRESS,
+            let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
             transactionObject.should.have.property('fromAddress').to.
                 equal(FROM_ADDRESS);
@@ -36,18 +35,18 @@ describe('Transaction.js', function() {
 
     describe('Verify Transaction', function() {
         it('Should return true if transaction is valid', function() {
-            let transactionObject = transaction.createTransaction(FROM_ADDRESS,
+            let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
-            let isValidTransaction = transaction.verifyTransaction(
+            let isValidTransaction = Transaction.verifyTransaction(
                 transactionObject, PUBLIC_KEY);
             isValidTransaction.should.be.true;
         });
 
         it('Should return false if transaction is invalid', function() {
-            let transactionObject = transaction.createTransaction(FROM_ADDRESS,
+            let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
             transactionObject.data = 'Man in the middle attacks here';
-            let isValidTransaction = transaction.verifyTransaction(
+            let isValidTransaction = Transaction.verifyTransaction(
                 transactionObject, PUBLIC_KEY);
             isValidTransaction.should.be.false;
         });
