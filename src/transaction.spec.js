@@ -1,12 +1,13 @@
 import Transaction from './transaction';
 import elliptic from 'elliptic';
+import sinon from 'sinon';
 
 describe('Transaction.js', function() {
     let EllipticCryptography = elliptic.ec;
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
     const PUBLIC_KEY = key.getPublic('hex');
-    const FROM_ADDRESS = key.getPublic().getX().toString('hex');
+    const FROM_ADDRESS = key.getPublic().toString('hex');
     const DATA = `The Times 03/Jan/2009
                 Chancellor on brink of second bailout for banks`;
 
@@ -49,6 +50,39 @@ describe('Transaction.js', function() {
             let isValidTransaction = Transaction.verifyTransaction(
                 transactionObject, PUBLIC_KEY);
             isValidTransaction.should.be.false;
+        });
+    });
+
+    describe('Add Transaction to pool', function() {
+        beforeEach(function() {
+            Transaction._transactionPool = [];
+        });
+        it('Should verify and add valid transaction to the pool', function() {
+            let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
+                '0123456789ABCDEF', DATA, key);
+            Transaction.verifyTransaction = sinon.fake.returns(true);
+
+            Transaction.addTransactionToThePool(transactionObject);
+
+            sinon.assert.calledWithExactly(Transaction.verifyTransaction,
+                transactionObject, transactionObject.fromAddress);
+            Transaction._transactionPool[0].should.equal(transactionObject);
+        });
+
+        it('Should not add invalid transaction to the pool', function() {
+            let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
+                '0123456789ABCDEF', DATA, key);
+            Transaction.verifyTransaction = sinon.fake.returns(false);
+
+            try {
+                Transaction.addTransactionToThePool(transactionObject);
+            } catch(e) {
+                // How do u add test case for error checking in mocha?
+            }
+
+            sinon.assert.calledWithExactly(Transaction.verifyTransaction,
+                transactionObject, transactionObject.fromAddress);
+            Transaction._transactionPool.length.should.equal(0);
         });
     });
 });
