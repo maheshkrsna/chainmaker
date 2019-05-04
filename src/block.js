@@ -9,31 +9,34 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
 class Block {
 
     /**
-     *
      * @method _createBlock
      * @memberof Block
      * @private
+     * @description Method to create a Blockchain Block
      * @param {String} previousHash Hash of previous Block
-     * @param {String} data Data to be stored in the Block
-     * @param {Number} nonce Random number that is used for Proof of work
+     * @param {String} data Stringified array of transactions
+     * @param {String} timeStamp time of commissioning the mining of this block
+     * @param {String} nonce Random unique number
+     * @param {String} hash Hash string of this block
      * @returns {Object} Block of a Blockchain
      */
-    _createBlock(previousHash, data, nonce) {
+    _createBlock(previousHash, data, timeStamp, nonce, hash) {
         let block = {};
         block.previousHash = previousHash;
         block.data = data;
         block.timeStamp = Date.now();
         block.nonce = nonce;
-        block.hash = this._generateHash(block.previousHash, block.data,
-            block.timeStamp, block.nonce);
+        block.hash = hash;
 
         return block;
     }
 
     /**
      * @method _generateHash
-     * @returns {string} hash generated using sha256
      * @memberof Block
+     * @private
+     * @description Method to generate hash of the arguments passed
+     * @returns {string} hash generated using sha256
      */
     _generateHash() {
         if (arguments.length === 0) {
@@ -49,6 +52,33 @@ class Block {
             .toString();
 
         return hash;
+    }
+
+    /**
+     * @method mineBlock
+     * @memberof Block
+     * @public
+     * @description Block method to mine and return a valid block
+     * @param {String} previousHash Hash string of the previous block
+     * @param {String} data Stringified array of Transaction data
+     * @param {Number} difficulty Difficulty level of mining set by n/w
+     * @returns {Object} Valid Block of a Blockchain
+     */
+    mineBlock(previousHash, data, difficulty) {
+        const timeStamp = Date.now();
+        let block = {};
+        let difficultyString = Array(difficulty + 1).join('0');
+        let hash = '';
+        let nonce = -1;
+
+        while( hash.substring(0, difficulty) !== difficultyString ) {
+            nonce += 1;
+            hash = this._generateHash(previousHash, data, timeStamp, nonce);
+        }
+
+        block = this._createBlock(previousHash, data, timeStamp, nonce, hash);
+
+        return block;
     }
 }
 

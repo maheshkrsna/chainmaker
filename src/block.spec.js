@@ -15,21 +15,24 @@ describe('Block.js', function() {
 
     // TODO: Add mineBlock method to the block as it is
     // TODO: the only exposable method of Block
-    describe('Create new Block', function() {
-        // it('Should create a new Block Object', function() {
-        //     let block1 = Block._createBlock(DATA, PREVIOUS_HASH);
-        //     block1.should.have.property('data').equal(DATA);
-        //     block1.should.have.property('previousHash').equal(PREVIOUS_HASH);
-        //     block1.should.have.property('timeStamp').equal(Date.now());
-        // });
-        // it('Should calculate and assign hash onto Block Object', function() {
-        //     const GENERATED_HASH = sha256()
-        //         .update(DATA + PREVIOUS_HASH + Date.now())
-        //         .digest('hex')
-        //         .toString();
-
-        //     let block1 = new Block(DATA, PREVIOUS_HASH);
-        //     block1.should.have.property('hash').equal(GENERATED_HASH);
-        // });
+    describe('Mine new Block', function() {
+        it('Should mine a new Block Object', function() {
+            let block1 = Block.mineBlock(PREVIOUS_HASH, DATA, 1);
+            block1.should.have.property('data').equal(DATA);
+            block1.should.have.property('previousHash').equal(PREVIOUS_HASH);
+            block1.should.have.property('timeStamp').equal(Date.now());
+            block1.should.have.property('nonce');
+            block1.should.have.property('hash');
+        });
+        it('Should mine a new Block Object with hash conforming to difficulty',
+            function() {
+                let difficulty = 3;
+                let difficultyString = Array(difficulty + 1).join('0');
+                let block1 = Block.mineBlock(PREVIOUS_HASH, DATA, difficulty);
+                block1.should.have.property('hash');
+                block1.hash.substring(0, difficulty).should.
+                    equal(difficultyString);
+            }
+        );
     });
 });
