@@ -53,7 +53,7 @@ class Transaction {
         // * component of public address from 'x' component.
         // * Therefore, I am settling for Public Key as wallet address for now.
         // TODO: Revisit this
-        if (key.getPublic().toString('hex') !== fromAddress) {
+        if (key.getPublic('hex') !== fromAddress) {
             throw new Error(
                 'You are attempting to sign someone else\'s Transaction'
             );
@@ -76,6 +76,7 @@ class Transaction {
             // transactionPool
             // Reset the transaction Pool and add transaction to it and return
         }
+        // Here transaction.fromAddress acts as a public key
         let isTransactionValid = this.verifyTransaction(transaction,
             transaction.fromAddress);
         // TODO: add a method to check if the transaction is already in pool
@@ -95,7 +96,7 @@ class Transaction {
      * @public
      * @param {String} fromAddress Wallet address of the sender
      * @param {String} toAddress Wallet address of the recepient
-     * @param {String} data Data to transact
+     * @param {Object} data Data to transact
      * @param {Object} key Elliptic Cryptographic(EC) Key Object of the sender
      * @returns {Object} transaction object containing fromAddress, toAddress,
      * data, timeStamp and Digital signature
@@ -104,7 +105,7 @@ class Transaction {
         let transaction = {};
         transaction.fromAddress = fromAddress;
         transaction.toAddress = toAddress;
-        transaction.data = data;
+        transaction.data = JSON.stringify(data);
         transaction.timeStamp = Date.now();
         transaction.signature = this._signTransaction(
             transaction.fromAddress,

@@ -13,8 +13,6 @@ describe('Block.js', function() {
         };
     });
 
-    // TODO: Add mineBlock method to the block as it is
-    // TODO: the only exposable method of Block
     describe('Mine new Block', function() {
         it('Should mine a new Block Object', function() {
             let block1 = Block.mineBlock(PREVIOUS_HASH, DATA, 1);

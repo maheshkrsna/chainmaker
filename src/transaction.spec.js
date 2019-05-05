@@ -7,9 +7,9 @@ describe('Transaction.js', function() {
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
     const PUBLIC_KEY = key.getPublic('hex');
-    const FROM_ADDRESS = key.getPublic().toString('hex');
-    const DATA = `The Times 03/Jan/2009
-                Chancellor on brink of second bailout for banks`;
+    const FROM_ADDRESS = key.getPublic('hex');
+    const DATA = {type: 'data',
+        value: 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'};
 
     beforeEach(function() {
         Date.now = function() {
@@ -27,7 +27,7 @@ describe('Transaction.js', function() {
             transactionObject.should.have.property('toAddress').to.
                 equal('0123456789ABCDEF');
             transactionObject.should.have.property('data').to.
-                equal(DATA);
+                equal(JSON.stringify(DATA));
             transactionObject.should.have.property('timeStamp').to.
                 equal(Date.now());
             transactionObject.should.have.property('signature');
@@ -46,7 +46,9 @@ describe('Transaction.js', function() {
         it('Should return false if transaction is invalid', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
-            transactionObject.data = 'Man in the middle attacks here';
+            transactionObject.data = JSON.stringify(
+                {type: 'data', value: 'Man in the middle attacks here'}
+            );
             let isValidTransaction = Transaction.verifyTransaction(
                 transactionObject, PUBLIC_KEY);
             isValidTransaction.should.be.false;
