@@ -1,5 +1,6 @@
-import sha256 from 'hash.js/lib/hash/sha/256.js';
 import elliptic from 'elliptic';
+import eventEmitter from './blockchainevents';
+import sha256 from 'hash.js/lib/hash/sha/256.js';
 
 /**
  * @class Transaction
@@ -112,7 +113,7 @@ class Transaction {
             this._generateHash(transaction.fromAddress, transaction.toAddress,
                 transaction.data, transaction.timeStamp),
             key);
-
+        eventEmitter.emit('BLOCKCHAIN_TRANSACTION_CREATED', transaction);
         return transaction;
     }
 
