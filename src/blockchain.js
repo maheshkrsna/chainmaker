@@ -157,4 +157,4 @@ class BlockChain {
     }
 }
 
-export default new BlockChain();
+export default BlockChain;

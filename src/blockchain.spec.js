@@ -4,6 +4,7 @@ import elliptic from 'elliptic';
 import Transaction from './transaction';
 
 describe('BlockChain.js', function() {
+    let blockChain = new BlockChain();
     let EllipticCryptography = elliptic.ec;
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
@@ -20,31 +21,31 @@ describe('BlockChain.js', function() {
 
     describe('on init', function() {
         it('should have one genesis block', function() {
-            BlockChain.chain.length.should.equal(1);
+            blockChain.chain.length.should.equal(1);
         });
     });
 
     describe('on Adding a block', function() {
-        it('should add a block to the blockchain', function() {
+        it('should add a block to the blockChain', function() {
             const transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
-            const previousBlockHash = BlockChain.getBlockChain()[0].hash;
+            const previousBlockHash = blockChain.getBlockChain()[0].hash;
             let block = Block.mineBlock(
                 previousBlockHash, JSON.stringify([transactionObject]), 1
             );
-            BlockChain.addBlock(block);
-            BlockChain.chain.length.should.equal(2);
+            blockChain.addBlock(block);
+            blockChain.chain.length.should.equal(2);
         });
     });
 
-    describe('on existing blockchain', function() {
+    describe('on existing blockChain', function() {
         let key1 = ec.genKeyPair();
         const FROM_ADDRESS_1 = key1.getPublic('hex');
         let key2 = ec.genKeyPair();
         const FROM_ADDRESS_2 = key2.getPublic('hex');
         let transaction1, transaction2, transaction3, transaction4, transaction5;
         beforeEach(function() {
-            BlockChain.chain.length = 1;
+            blockChain.chain.length = 1;
             const DATA_1 = {type: 'currency',
                 value: 10};
             const DATA_2 = {type: 'currency',
@@ -77,24 +78,24 @@ describe('BlockChain.js', function() {
             transactionList2.push(JSON.stringify(transaction5));
 
             let block1 = Block.mineBlock(
-                BlockChain.getLastBlockHash(), JSON.stringify(transactionList1), 1
+                blockChain.getLastBlockHash(), JSON.stringify(transactionList1), 1
             );
-            BlockChain.addBlock(block1);
+            blockChain.addBlock(block1);
             let block2 = Block.mineBlock(
-                BlockChain.getLastBlockHash(), JSON.stringify(transactionList2), 1
+                blockChain.getLastBlockHash(), JSON.stringify(transactionList2), 1
             );
-            BlockChain.addBlock(block2);
+            blockChain.addBlock(block2);
         });
 
         it('should get balance of transactions when queried for', function() {
-            const balanceOfAddress1 = BlockChain.getBalance(FROM_ADDRESS_1);
+            const balanceOfAddress1 = blockChain.getBalance(FROM_ADDRESS_1);
             const remainingBalance = 5;
             balanceOfAddress1.should.equal(remainingBalance);
         });
 
         it('should get list of transactions from a specific address', function(){
             const fromAddressTransactionList = [transaction3, transaction5];
-            const fromTransactionList = BlockChain.getTransaction(FROM_ADDRESS_1, '*');
+            const fromTransactionList = blockChain.getTransaction(FROM_ADDRESS_1, '*');
             JSON.stringify(fromTransactionList).should.equal(
                 JSON.stringify(fromAddressTransactionList)
             );
@@ -102,7 +103,7 @@ describe('BlockChain.js', function() {
 
         it('should get list of transactions to a specific address', function(){
             const toAddressTransactionList = [transaction2, transaction3];
-            const toTransactionList = BlockChain.getTransaction('*', FROM_ADDRESS_2);
+            const toTransactionList = blockChain.getTransaction('*', FROM_ADDRESS_2);
             JSON.stringify(toTransactionList).should.equal(
                 JSON.stringify(toAddressTransactionList)
             );
@@ -111,27 +112,27 @@ describe('BlockChain.js', function() {
         it('should get list of transactions from and to a specific address', function(){
             const specificTransactionList = [transaction4];
             const specificTransaction =
-                BlockChain.getTransaction(FROM_ADDRESS_2, FROM_ADDRESS_1);
+                blockChain.getTransaction(FROM_ADDRESS_2, FROM_ADDRESS_1);
             JSON.stringify(specificTransaction).should.equal(
                 JSON.stringify(specificTransactionList)
             );
         });
 
-        it('should return a clone of blockchain when queried for', function() {
-            const blockChain = JSON.stringify(BlockChain.chain);
-            JSON.stringify(BlockChain.getBlockChain()).should.equal(blockChain);
+        it('should return a clone of blockChain when queried for', function() {
+            const blockChainClone = JSON.stringify(blockChain.chain);
+            JSON.stringify(blockChain.getBlockChain()).should.equal(blockChainClone);
         });
 
         it('should get last block\'s hash when queried for', function() {
-            const blockChain = BlockChain.getBlockChain();
-            const lastBlockHash = blockChain[blockChain.length - 1].hash;
-            BlockChain.getLastBlockHash().should.equal(lastBlockHash);
+            const blockChainClone = blockChain.getBlockChain();
+            const lastBlockHash = blockChainClone[blockChainClone.length - 1].hash;
+            blockChain.getLastBlockHash().should.equal(lastBlockHash);
         });
 
         it('should get the block from the block chain when queried for', function() {
-            const thirdBlock = BlockChain.getBlockChain()[2];
+            const thirdBlock = blockChain.getBlockChain()[2];
             const thirdBlockHash = thirdBlock.hash;
-            JSON.stringify(BlockChain.getBlock(thirdBlockHash)).should.equal(
+            JSON.stringify(blockChain.getBlock(thirdBlockHash)).should.equal(
                 JSON.stringify(thirdBlock)
             );
         });
