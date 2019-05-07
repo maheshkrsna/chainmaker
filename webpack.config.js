@@ -1,8 +1,6 @@
-var glob = require('glob');
-var path = require('path');
-var webpack = require('webpack');
+let glob = require('glob');
 
-var webpackConfig = {
+let webpackConfig = {
     entry: glob.sync('./src/!(*.spec).js'),
     output: {
         path: __dirname + '/lib',
