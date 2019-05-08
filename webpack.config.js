@@ -1,11 +1,10 @@
 let glob = require('glob');
 
 let webpackConfig = {
-    entry: glob.sync('./src/!(*.spec).js'),
+    entry: './src/chainmaker.js',
     output: {
         path: __dirname + '/lib',
         filename: 'chainmaker.js',
-        library: 'chainmaker',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
