@@ -2,29 +2,37 @@ import Block from './block';
 import sha256 from 'hash.js/lib/hash/sha/256.js';
 
 /**
- * @class BlockChain
- * @description Prototype class to create a BlockChain Object.
+ * @class Blockchain
+ * @description Prototype class to create a Blockchain Object.
  */
-class BlockChain {
-    constructor() {
-        this.chain = [];
-        let GenesisBlock = Block.mineBlock('0',
-            JSON.stringify([JSON.stringify(
-                {
-                    fromAddress: '0',
-                    toAddress: '0',
-                    data: JSON.stringify({type: 'data', value: 'This is Genesis Block Data'}),
-                    timeStamp: Date.now
-                }
-            )]),
-            1
-        );
-        this.chain.push(GenesisBlock);
+class Blockchain {
+    constructor(name, blockchain) {
+        this.name = name;
+        if (blockchain) {
+            this.chain = blockchain;
+        } else {
+            this.chain = [];
+            let GenesisBlock = Block.mineBlock('0',
+                JSON.stringify([JSON.stringify(
+                    {
+                        fromAddress: '0',
+                        toAddress: '0',
+                        data: JSON.stringify({
+                            type: 'data',
+                            value: 'This is Genesis Block Data'
+                        }),
+                        timeStamp: Date.now
+                    }
+                )]),
+                1
+            );
+            this.chain.push(GenesisBlock);
+        }
     }
 
     /**
      * @method _generateHash
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @private
      * @description Method to generate hash of the arguments passed.
      * @returns {string} hash generated using sha256.
@@ -47,10 +55,10 @@ class BlockChain {
 
     /**
      * @method addBlock
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
-     * @description Method to add a valid Block Object onto the BlockChain.
-     * @param {Object} block Block Object to be added to the BlockChain.
+     * @description Method to add a valid Block Object onto the Blockchain.
+     * @param {Object} block Block Object to be added to the Blockchain.
      */
     addBlock(block) {
         this.chain.push(block);
@@ -58,11 +66,11 @@ class BlockChain {
 
     /**
      * @method getBalance
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
-     * @description Method to get currency balance on the BlockChain Ledger.
+     * @description Method to get currency balance on the Blockchain Ledger.
      * @param {String} address wallet address whose balance is queried for
-     * @returns {Number} Currency Balance from the BlockChain Ledger.
+     * @returns {Number} Currency Balance from the Blockchain Ledger.
      */
     getBalance(address) {
         let balance = 0;
@@ -90,7 +98,7 @@ class BlockChain {
 
     /**
      * @method getBlock
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
      * @description Method to return the Block Object containing the queried Hash.
      * @param {String} blockHash Hash of the Block Object queried for.
@@ -107,7 +115,7 @@ class BlockChain {
 
     /**
      * @method getBlockChain
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
      * @description Method to get a clone of blockchain.
      * @returns {Array} An array of blocks.
@@ -118,7 +126,7 @@ class BlockChain {
 
     /**
      * @method getLastBlockHash
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
      * @description Method to get the last block's hash of the Blockchain.
      * @returns {String} Hash of the last block in the Blockchain.
@@ -129,8 +137,19 @@ class BlockChain {
     }
 
     /**
+     * @method getName
+     * @memberof Blockchain
+     * @description Method to get the name of the Blockchain.
+     * @returns
+     * @memberof Blockchain
+     */
+    getName() {
+        return this.name;
+    }
+
+    /**
      * @method getTransaction
-     * @memberof BlockChain
+     * @memberof Blockchain
      * @public
      * @description Method to get all Transactions between two addresses.
      * @param {String} fromAddress From Addresses in Transactions or Wildcard '*'.
@@ -157,4 +176,4 @@ class BlockChain {
     }
 }
 
-export default BlockChain;
+export default Blockchain;

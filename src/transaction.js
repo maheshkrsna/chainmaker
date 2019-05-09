@@ -15,9 +15,9 @@ class Transaction {
 
     /**
      * @method _generateHash
-     * @description Generates a hash.
      * @memberof Block
      * @private
+     * @description Generates a hash.
      * @returns {string} hash generated using sha256
      */
     _generateHash() {
@@ -38,9 +38,9 @@ class Transaction {
 
     /**
      * @method _signTransaction
-     * @description Signs a Transaction object.
      * @memberof Transaction
      * @private
+     * @description Signs a Transaction object.
      * @param {String} fromAddress Wallet address of the sender
      * @param {String} hash Hash of the data to be signed
      * @param {Object} key Elliptic Cryptograhic(EC) Key Object of the sender
@@ -66,9 +66,9 @@ class Transaction {
 
     /**
      * @method addTransactionToThePool
-     * @description Verifies the Transaction object and adds it onto the pool.
      * @memberof Transaction
      * @public
+     * @description Verifies the Transaction object and adds it onto the pool.
      * @param {Object} transaction A Transaction object
      */
     addTransactionToThePool(transaction) {
@@ -92,9 +92,9 @@ class Transaction {
 
     /**
      * @method createTransaction
-     * @description Creates and signs a Transaction object.
      * @memberof Transaction
      * @public
+     * @description Creates and signs a Transaction object.
      * @param {String} fromAddress Wallet address of the sender
      * @param {String} toAddress Wallet address of the recepient
      * @param {Object} data Data to transact
@@ -118,11 +118,10 @@ class Transaction {
     }
 
     /**
-     *
      * @method verifyTransaction
-     * @description Verifies a transaction object
      * @memberof Transaction
      * @public
+     * @description Verifies a transaction object
      * @param {Object} transaction object containing fromAddress, toAddress,
      * data, timeStamp and Digital signature
      * @param {String} publicKeyString Public Key of the sender
