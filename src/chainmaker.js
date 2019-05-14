@@ -14,7 +14,6 @@ class ChainMaker {
      * @public
      * @description Method to create a new Blockchain.
      * @param {String} name Name of the Blockchain.
-     * @returns {Array} A copy of Blockchain Array.
      */
     createBlockchain(name) {
         this.blockChain = new Blockchain(name);

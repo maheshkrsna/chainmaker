@@ -140,7 +140,7 @@ class Blockchain {
      * @method getName
      * @memberof Blockchain
      * @description Method to get the name of the Blockchain.
-     * @returns
+     * @returns {String} Name of the Blockchain
      * @memberof Blockchain
      */
     getName() {
