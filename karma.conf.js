@@ -1,7 +1,7 @@
 module.exports = function(config) {
     config.set({
         frameworks: ['mocha', 'chai'],
-        files: ['src/*.spec.js'],
+        files: ['src/*.js'],
         reporters: ['progress'],
         // karma web server port
         port: 9876,
@@ -13,20 +13,35 @@ module.exports = function(config) {
         // singleRun: false,
         concurrency: Infinity,
         preprocessors: {
-            'src/*.spec.js': ['webpack']
+            'src/*.js': ['babel', 'webpack']
+        },
+        babelPreprocessor: {
+            options: {
+                presets: ['@babel/preset-env'],
+                plugins: [
+                    [
+                        '@babel/plugin-proposal-class-properties',
+                        { loose: true }
+                    ]
+                ]
+            }
         },
         webpack: {
             module: {
                 rules: [
                     {
-                        test: /\.spec.js$/,
+                        test: /\.js$/,
                         exclude: /node_modules/,
                         use: [
                             {
                                 loader: 'babel-loader',
                                 options: {
-                                    presets: [
-                                        '@babel/preset-env'
+                                    presets: ['@babel/preset-env'],
+                                    plugins: [
+                                        [
+                                            '@babel/plugin-proposal-class-properties',
+                                            { loose: true }
+                                        ]
                                     ]
                                 }
                             }

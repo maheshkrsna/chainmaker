@@ -1,4 +1,5 @@
 module.exports = {
+    'plugins': ['babel'],
     'env': {
         'es6': true,
         'node': true,
@@ -15,6 +16,7 @@ module.exports = {
         'ecmaVersion': 2018,
         'sourceType': 'module'
     },
+    'parser': 'babel-eslint',
     'rules': {
         'indent': [ 'error', 4 ],
         'linebreak-style': [ 'warn', 'windows' ],
@@ -58,6 +60,7 @@ module.exports = {
         'no-trailing-spaces': ['error', { 'skipBlankLines': false }],
         'no-whitespace-before-property': 'error',
         'wrap-regex': 'error',
-        'no-var': 'error'
+        'no-var': 'error',
+        'babel/semi': [ 'error', 'always' ]
     }
 };
