@@ -1,10 +1,10 @@
-import BlockChain from './blockchain';
+import Blockchain from './blockchain';
 import Block from './block';
 import elliptic from 'elliptic';
 import Transaction from './transaction';
 
-describe('BlockChain.js', function() {
-    let blockChain = new BlockChain();
+describe('Blockchain.js', function() {
+    let blockChain = new Blockchain();
     let EllipticCryptography = elliptic.ec;
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
@@ -21,7 +21,7 @@ describe('BlockChain.js', function() {
 
     describe('on init', function() {
         it('should have one genesis block', function() {
-            blockChain.chain.length.should.equal(1);
+            blockChain.getBlockchain().length.should.equal(1);
         });
     });
 
@@ -29,12 +29,12 @@ describe('BlockChain.js', function() {
         it('should add a block to the blockChain', function() {
             const transactionObject = Transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
-            const previousBlockHash = blockChain.getBlockChain()[0].hash;
+            const previousBlockHash = blockChain.getBlockchain()[0].hash;
             let block = Block.mineBlock(
                 previousBlockHash, JSON.stringify([transactionObject]), 1
             );
             blockChain.addBlock(block);
-            blockChain.chain.length.should.equal(2);
+            blockChain.getBlockchain().length.should.equal(2);
         });
     });
 
@@ -45,7 +45,7 @@ describe('BlockChain.js', function() {
         const FROM_ADDRESS_2 = key2.getPublic('hex');
         let transaction1, transaction2, transaction3, transaction4, transaction5;
         beforeEach(function() {
-            blockChain.chain.length = 1;
+            blockChain = new Blockchain();
             const DATA_1 = {type: 'currency',
                 value: 10};
             const DATA_2 = {type: 'currency',
@@ -119,18 +119,18 @@ describe('BlockChain.js', function() {
         });
 
         it('should return a clone of blockChain when queried for', function() {
-            const blockChainClone = JSON.stringify(blockChain.chain);
-            JSON.stringify(blockChain.getBlockChain()).should.equal(blockChainClone);
+            const blockChainClone = JSON.stringify(blockChain.getBlockchain());
+            JSON.stringify(blockChain.getBlockchain()).should.equal(blockChainClone);
         });
 
         it('should get last block\'s hash when queried for', function() {
-            const blockChainClone = blockChain.getBlockChain();
+            const blockChainClone = blockChain.getBlockchain();
             const lastBlockHash = blockChainClone[blockChainClone.length - 1].hash;
             blockChain.getLastBlockHash().should.equal(lastBlockHash);
         });
 
         it('should get the block from the block chain when queried for', function() {
-            const thirdBlock = blockChain.getBlockChain()[2];
+            const thirdBlock = blockChain.getBlockchain()[2];
             const thirdBlockHash = thirdBlock.hash;
             JSON.stringify(blockChain.getBlock(thirdBlockHash)).should.equal(
                 JSON.stringify(thirdBlock)

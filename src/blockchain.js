@@ -6,12 +6,14 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
  * @description Prototype class to create a Blockchain Object.
  */
 class Blockchain {
+    #name;
+    #chain;
     constructor(name, blockchain) {
-        this.name = name;
+        this.#name = name;
         if (blockchain) {
-            this.chain = blockchain;
+            this.#chain = blockchain;
         } else {
-            this.chain = [];
+            this.#chain = [];
             let GenesisBlock = Block.mineBlock('0',
                 JSON.stringify([JSON.stringify(
                     {
@@ -26,7 +28,7 @@ class Blockchain {
                 )]),
                 1
             );
-            this.chain.push(GenesisBlock);
+            this.#chain.push(GenesisBlock);
         }
     }
 
@@ -61,7 +63,7 @@ class Blockchain {
      * @param {Object} block Block Object to be added to the Blockchain.
      */
     addBlock(block) {
-        this.chain.push(block);
+        this.#chain.push(block);
     }
 
     /**
@@ -75,9 +77,9 @@ class Blockchain {
     getBalance(address) {
         let balance = 0;
         // for each block inside blockchain
-        for (let i = 0; i < this.chain.length; i++) {
+        for (let i = 0; i < this.#chain.length; i++) {
             // data property of the block containing an array of transactions
-            let blockDataObj = JSON.parse(this.chain[i].data);
+            let blockDataObj = JSON.parse(this.#chain[i].data);
             // for each block.data inside block
             for(let j = 0; j < blockDataObj.length; j++) {
                 let dataTransactionObj = JSON.parse(blockDataObj[j]);
@@ -105,23 +107,23 @@ class Blockchain {
      * @returns {Object} The Block Object containing the queried Hash.
      */
     getBlock(blockHash) {
-        for (let i = 0; i < this.chain.length; i++) {
-            if(this.chain[i].hash === blockHash) {
-                return this.chain[i];
+        for (let i = 0; i < this.#chain.length; i++) {
+            if(this.#chain[i].hash === blockHash) {
+                return this.#chain[i];
             }
         }
         return null;
     }
 
     /**
-     * @method getBlockChain
+     * @method getBlockchain
      * @memberof Blockchain
      * @public
      * @description Method to get a clone of blockchain.
      * @returns {Array} An array of blocks.
      */
-    getBlockChain() {
-        return this.chain.slice(0);
+    getBlockchain() {
+        return this.#chain.slice(0);
     }
 
     /**
@@ -132,8 +134,8 @@ class Blockchain {
      * @returns {String} Hash of the last block in the Blockchain.
      */
     getLastBlockHash() {
-        const chainLength = this.chain.length;
-        return this.chain[chainLength - 1].hash;
+        const chainLength = this.#chain.length;
+        return this.#chain[chainLength - 1].hash;
     }
 
     /**
@@ -144,7 +146,7 @@ class Blockchain {
      * @memberof Blockchain
      */
     getName() {
-        return this.name;
+        return this.#name;
     }
 
     /**
@@ -160,8 +162,8 @@ class Blockchain {
         let transactions = [];
 
         // for each block inside blockchain
-        for (let i = 0; i < this.chain.length; i++) {
-            let blockDataObj = JSON.parse(this.chain[i].data);
+        for (let i = 0; i < this.#chain.length; i++) {
+            let blockDataObj = JSON.parse(this.#chain[i].data);
             // for each block.data inside block
             for (let j=0; j < blockDataObj.length; j++) {
                 let dataTransactionObj = JSON.parse(blockDataObj[j]);
