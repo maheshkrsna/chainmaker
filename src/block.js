@@ -10,8 +10,9 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
 class Block {
 
     /**
-     * @method _createBlock
+     * @method #createBlock
      * @memberof Block
+     * @static
      * @private
      * @description Method to create a Blockchain Block
      * @param {String} previousHash Hash of previous Block
@@ -21,7 +22,7 @@ class Block {
      * @param {String} hash Hash string of this block
      * @returns {Object} Block of a Blockchain
      */
-    _createBlock(previousHash, data, timeStamp, nonce, hash) {
+    static #createBlock = (previousHash, data, timeStamp, nonce, hash) => {
         let block = {};
         block.previousHash = previousHash;
         block.data = data;
@@ -32,21 +33,23 @@ class Block {
         return block;
     }
 
+    // TODO: Move this function elsewhere
     /**
-     * @method _generateHash
+     * @method #generateHash
      * @memberof Block
+     * @static
      * @private
      * @description Method to generate hash of the arguments passed
      * @returns {string} hash generated using sha256
      */
-    _generateHash() {
-        if (arguments.length === 0) {
+    static #generateHash = (...args) => {
+        if (args.length === 0) {
             throw new Error('There is no data to hash');
         }
         let dataToHash = '';
-        for (let i = 0; i < arguments.length; i++) {
-            dataToHash += arguments[i];
-        }
+        args.forEach((arg) => {
+            dataToHash += arg;
+        });
         let hash = sha256()
             .update(dataToHash)
             .digest('hex')
@@ -58,6 +61,7 @@ class Block {
     /**
      * @method mineBlock
      * @memberof Block
+     * @static
      * @public
      * @description Block method to mine and return a valid block
      * @param {String} previousHash Hash string of the previous block
@@ -65,7 +69,7 @@ class Block {
      * @param {Number} difficulty Difficulty level of mining set by n/w
      * @returns {Object} Valid Block of a Blockchain
      */
-    mineBlock(previousHash, data, difficulty) {
+    static mineBlock(previousHash, data, difficulty) {
         const timeStamp = Date.now();
         let block = {};
         let difficultyString = Array(difficulty + 1).join('0');
@@ -74,13 +78,13 @@ class Block {
 
         while( hash.substring(0, difficulty) !== difficultyString ) {
             nonce += 1;
-            hash = this._generateHash(previousHash, data, timeStamp, nonce);
+            hash = this.#generateHash(previousHash, data, timeStamp, nonce);
         }
 
-        block = this._createBlock(previousHash, data, timeStamp, nonce, hash);
+        block = this.#createBlock(previousHash, data, timeStamp, nonce, hash);
         eventEmitter.emit('BLOCKCHAIN_BLOCK_MINED', block);
         return block;
     }
 }
 
-export default new Block();
+export default Block;
