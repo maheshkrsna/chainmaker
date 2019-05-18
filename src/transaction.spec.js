@@ -6,6 +6,7 @@ describe('Transaction.js', function() {
     let EllipticCryptography = elliptic.ec;
     let ec = new EllipticCryptography('secp256k1');
     let key = ec.genKeyPair();
+    const PRIVATE_KEY = key.getPrivate('hex');
     const PUBLIC_KEY = key.getPublic('hex');
     const FROM_ADDRESS = key.getPublic('hex');
     const DATA = {type: 'data',
@@ -21,7 +22,7 @@ describe('Transaction.js', function() {
     describe('Create Transaction', function() {
         it('Should create a new Transaction Object', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
-                '0123456789ABCDEF', DATA, key);
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
             transactionObject.should.have.property('fromAddress').to.
                 equal(FROM_ADDRESS);
             transactionObject.should.have.property('toAddress').to.
@@ -37,7 +38,7 @@ describe('Transaction.js', function() {
     describe('Verify Transaction', function() {
         it('Should return true if transaction is valid', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
-                '0123456789ABCDEF', DATA, key);
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
             let isValidTransaction = Transaction.verifyTransaction(
                 transactionObject, PUBLIC_KEY);
             isValidTransaction.should.be.true;
@@ -45,7 +46,7 @@ describe('Transaction.js', function() {
 
         it('Should return false if transaction is invalid', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
-                '0123456789ABCDEF', DATA, key);
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
             transactionObject.data = JSON.stringify(
                 {type: 'data', value: 'Man in the middle attacks here'}
             );
@@ -61,7 +62,7 @@ describe('Transaction.js', function() {
         });
         it('Should verify and add valid transaction to the pool', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
-                '0123456789ABCDEF', DATA, key);
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
             Transaction.verifyTransaction = sinon.fake.returns(true);
 
             Transaction.addTransactionToThePool(transactionObject);
@@ -73,7 +74,7 @@ describe('Transaction.js', function() {
 
         it('Should not add invalid transaction to the pool', function() {
             let transactionObject = Transaction.createTransaction(FROM_ADDRESS,
-                '0123456789ABCDEF', DATA, key);
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
             Transaction.verifyTransaction = sinon.fake.returns(false);
 
             try {

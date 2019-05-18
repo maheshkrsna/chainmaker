@@ -8,9 +8,13 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
  */
 class Transaction {
 
+    #ec;
     constructor() {
         this._transactionPool = [];
         this.maxTransactionPoolSize = 10;
+
+        let EllipticCryptography = elliptic.ec;
+        this.#ec = new EllipticCryptography('secp256k1');
     }
 
     /**
@@ -43,10 +47,11 @@ class Transaction {
      * @description Signs a Transaction object.
      * @param {String} fromAddress Wallet address of the sender
      * @param {String} hash Hash of the data to be signed
-     * @param {Object} key Elliptic Cryptograhic(EC) Key Object of the sender
+     * @param {String} privateKey Elliptic Cryptograhic(EC) Private Key string of the sender
      * @returns {string} Digital Signature
      */
-    _signTransaction(fromAddress, hash, key) {
+    _signTransaction(fromAddress, hash, privateKey) {
+        let key = this.#ec.keyFromPrivate(privateKey, 'hex');
         // * Elliptic cryptography offers us a public key in form of
         // * `y^2 = ax^3 + bx + c`, with prefix of 0x04.
         // * I tried extracting 'x' component of ec public key to use that as
@@ -98,11 +103,11 @@ class Transaction {
      * @param {String} fromAddress Wallet address of the sender
      * @param {String} toAddress Wallet address of the recepient
      * @param {Object} data Data to transact
-     * @param {Object} key Elliptic Cryptographic(EC) Key Object of the sender
+     * @param {String} privateKey Elliptic Cryptographic(EC) Private Key string of the sender
      * @returns {Object} transaction object containing fromAddress, toAddress,
      * data, timeStamp and Digital signature
      */
-    createTransaction(fromAddress, toAddress, data, key) {
+    createTransaction(fromAddress, toAddress, data, privateKey) {
         let transaction = {};
         transaction.fromAddress = fromAddress;
         transaction.toAddress = toAddress;
@@ -112,7 +117,7 @@ class Transaction {
             transaction.fromAddress,
             this._generateHash(transaction.fromAddress, transaction.toAddress,
                 transaction.data, transaction.timeStamp),
-            key);
+            privateKey);
         eventEmitter.emit('BLOCKCHAIN_TRANSACTION_CREATED', transaction);
         return transaction;
     }
@@ -128,10 +133,7 @@ class Transaction {
      * @returns {boolean} True if the transaction is valid
      */
     verifyTransaction(transaction, publicKeyString) {
-        let EllipticCryptography = elliptic.ec;
-        let ec = new EllipticCryptography('secp256k1');
-        let publicKey = ec.keyFromPublic(publicKeyString, 'hex');
-
+        let publicKey = this.#ec.keyFromPublic(publicKeyString, 'hex');
         let transactionHash = this._generateHash(transaction.fromAddress,
             transaction.toAddress, transaction.data, transaction.timeStamp);
         let isValidTransaction = publicKey.verify(transactionHash,
