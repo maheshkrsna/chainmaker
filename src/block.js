@@ -9,6 +9,8 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
  */
 class Block {
 
+    static #interrupt = false;
+
     /**
      * @method #createBlock
      * @memberof Block
@@ -59,6 +61,17 @@ class Block {
     }
 
     /**
+     * @method interruptMining
+     * @memberof Block
+     * @static
+     * @public
+     * @description Block method to interrupt mining
+     */
+    static interruptMining() {
+        this.#interrupt = true;
+    }
+
+    /**
      * @method mineBlock
      * @memberof Block
      * @static
@@ -67,7 +80,7 @@ class Block {
      * @param {String} previousHash Hash string of the previous block
      * @param {String} data Stringified array of Transaction data
      * @param {Number} difficulty Difficulty level of mining set by n/w
-     * @returns {Object} Valid Block of a Blockchain
+     * @returns {Object} Valid Block of a Blockchain || Error Object generated due to interrupt
      */
     static mineBlock(previousHash, data, difficulty) {
         const timeStamp = Date.now();
@@ -77,6 +90,10 @@ class Block {
         let nonce = -1;
 
         while( hash.substring(0, difficulty) !== difficultyString ) {
+            if (this.#interrupt) {
+                this.#interrupt = false;
+                return new Error('Mine Block interrupted');
+            }
             nonce += 1;
             hash = this.#generateHash(previousHash, data, timeStamp, nonce);
         }
