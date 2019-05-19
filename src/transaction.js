@@ -142,4 +142,4 @@ class Transaction {
     }
 }
 
-export default new Transaction();
+export default Transaction;

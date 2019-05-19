@@ -12,6 +12,8 @@ describe('Blockchain.js', function() {
     const FROM_ADDRESS = key.getPublic('hex');
     const DATA = {type: 'data',
         value: 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'};
+    let transaction = new Transaction();
+
     beforeEach(function() {
         Date.now = function() {
             const NOW_IN_MILLISECONDS = 1556475677127;
@@ -27,7 +29,7 @@ describe('Blockchain.js', function() {
 
     describe('on Adding a block', function() {
         it('should add a block to the blockChain', function() {
-            const transactionObject = Transaction.createTransaction(FROM_ADDRESS,
+            const transactionObject = transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, key);
             const previousBlockHash = blockChain.getBlockchain()[0].hash;
             let block = Block.mineBlock(
@@ -59,15 +61,15 @@ describe('Blockchain.js', function() {
             let transactionList1 = [];
             let transactionList2 = [];
 
-            transaction1 = Transaction.createTransaction(FROM_ADDRESS,
+            transaction1 = transaction.createTransaction(FROM_ADDRESS,
                 FROM_ADDRESS_1, DATA_1, key);
-            transaction2 = Transaction.createTransaction(FROM_ADDRESS,
+            transaction2 = transaction.createTransaction(FROM_ADDRESS,
                 FROM_ADDRESS_2, DATA_2, key);
-            transaction3 = Transaction.createTransaction(FROM_ADDRESS_1,
+            transaction3 = transaction.createTransaction(FROM_ADDRESS_1,
                 FROM_ADDRESS_2, DATA_3, key1);
-            transaction4 = Transaction.createTransaction(FROM_ADDRESS_2,
+            transaction4 = transaction.createTransaction(FROM_ADDRESS_2,
                 FROM_ADDRESS_1, DATA_4, key2);
-            transaction5 = Transaction.createTransaction(FROM_ADDRESS_1,
+            transaction5 = transaction.createTransaction(FROM_ADDRESS_1,
                 '0123456789ABCDEF', DATA_5, key1);
 
             transactionList1.push(JSON.stringify(transaction1));

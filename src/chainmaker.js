@@ -1,7 +1,9 @@
 import Blockchain from './blockchain';
 import localforage from 'localforage';
-import transaction from './transaction';
+import Transaction from './transaction';
 import Wallet from './wallet';
+
+let transaction = new Transaction();
 
 /**
  * @class ChainMaker
