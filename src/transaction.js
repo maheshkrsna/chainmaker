@@ -2,36 +2,71 @@ import elliptic from 'elliptic';
 import eventEmitter from './blockchainevents';
 import sha256 from 'hash.js/lib/hash/sha/256.js';
 
+let EllipticCryptography = elliptic.ec;
+let ec = new EllipticCryptography('secp256k1');
+
 /**
  * @class Transaction
  * @description Class to create and verify transactions
  */
 class Transaction {
 
-    #ec;
-    constructor() {
-        this._transactionPool = [];
-        this.maxTransactionPoolSize = 10;
+    #transactionPool;
+    #maxTransactionPoolSize;
 
-        let EllipticCryptography = elliptic.ec;
-        this.#ec = new EllipticCryptography('secp256k1');
+    constructor() {
+        this.#transactionPool = [];
+        this.#maxTransactionPoolSize = 10;
+    }
+
+    /**
+     * @method transactionPool
+     * @memberof Transaction
+     * @public
+     * @description Returns the transaction pool.
+     * @returns {Array} Transaction Pool.
+     */
+    get transactionPool() {
+        return this.#transactionPool;
+    }
+
+    /**
+     * @method transactionPoolSize
+     * @memberof Transaction
+     * @public
+     * @description Gets the transaction pool size.
+     * @returns {Number} Transaction Pool Size.
+     */
+    get transactionPoolSize() {
+        return this.#maxTransactionPoolSize;
+    }
+
+    /**
+     * @method transactionPoolSize
+     * @memberof Transaction
+     * @public
+     * @description Gets the transaction pool size.
+     * @param {Number} size Transaction Pool Size.
+     */
+    set transactionPoolSize(size) {
+        this.#maxTransactionPoolSize = size;
     }
 
     /**
      * @method _generateHash
-     * @memberof Block
+     * @memberof Transaction
      * @private
      * @description Generates a hash.
      * @returns {string} hash generated using sha256
      */
-    _generateHash() {
-        if (arguments.length === 0) {
+    _generateHash(...args) {
+        if (args.length === 0) {
             throw new Error('There is no data to hash');
         }
         let dataToHash = '';
-        for (let i = 0; i < arguments.length; i++) {
-            dataToHash += arguments[i];
-        }
+        args.forEach((arg) => {
+            dataToHash += arg;
+        });
         let hash = sha256()
             .update(dataToHash)
             .digest('hex')
@@ -51,7 +86,7 @@ class Transaction {
      * @returns {string} Digital Signature
      */
     _signTransaction(fromAddress, hash, privateKey) {
-        let key = this.#ec.keyFromPrivate(privateKey, 'hex');
+        let key = ec.keyFromPrivate(privateKey, 'hex');
         // * Elliptic cryptography offers us a public key in form of
         // * `y^2 = ax^3 + bx + c`, with prefix of 0x04.
         // * I tried extracting 'x' component of ec public key to use that as
@@ -77,7 +112,7 @@ class Transaction {
      * @param {Object} transaction A Transaction object
      */
     addTransactionToThePool(transaction) {
-        if (this._transactionPool.length >= this.maxTransactionPoolSize) {
+        if (this.#transactionPool.length >= this.#maxTransactionPoolSize) {
             // broadcast n/w to start mining a block with the current
             // transactionPool
             // Reset the transaction Pool and add transaction to it and return
@@ -87,7 +122,7 @@ class Transaction {
             transaction.fromAddress);
         // TODO: add a method to check if the transaction is already in pool
         if (isTransactionValid) {
-            this._transactionPool.push(transaction);
+            this.#transactionPool.push(transaction);
         } else {
             throw new Error(
                 'Attempted to push invalid transaction onto the pool'
@@ -133,7 +168,7 @@ class Transaction {
      * @returns {boolean} True if the transaction is valid
      */
     verifyTransaction(transaction, publicKeyString) {
-        let publicKey = this.#ec.keyFromPublic(publicKeyString, 'hex');
+        let publicKey = ec.keyFromPublic(publicKeyString, 'hex');
         let transactionHash = this._generateHash(transaction.fromAddress,
             transaction.toAddress, transaction.data, transaction.timeStamp);
         let isValidTransaction = publicKey.verify(transactionHash,
