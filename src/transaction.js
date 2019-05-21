@@ -131,6 +131,18 @@ class Transaction {
     }
 
     /**
+     * @method clearTransactionPool
+     * @memberof Transaction
+     * @public
+     * @description Clears the Transaction Pool.
+     * @returns {Object} this Reference to self to enable method chaining
+     */
+    clearTransactionPool() {
+        this.#transactionPool = [];
+        return this;
+    }
+
+    /**
      * @method createTransaction
      * @memberof Transaction
      * @public
@@ -143,6 +155,12 @@ class Transaction {
      * data, timeStamp and Digital signature
      */
     createTransaction(fromAddress, toAddress, data, privateKey) {
+        // Do not allow transactions if there are any other transactions pending in the pool
+        if(this.isAnyTransactionPending(fromAddress)) {
+            throw new Error(`There is already one Transaction pending from this Address: 
+                ${fromAddress}`);
+        }
+
         let transaction = {};
         transaction.fromAddress = fromAddress;
         transaction.toAddress = toAddress;
@@ -155,6 +173,23 @@ class Transaction {
             privateKey);
         eventEmitter.emit('BLOCKCHAIN_TRANSACTION_CREATED', transaction);
         return transaction;
+    }
+
+    /**
+     * @method isAnyTransactionPending
+     * @memberof Transaction
+     * @public
+     * @description Checks the Transaction Pool for any pending transaction from the address.
+     * @param {String} fromAddress Address whose transaction to be queried for.
+     * @returns {boolean} boolean value indicating whether transaction is present or not.
+     */
+    isAnyTransactionPending(fromAddress) {
+        for(let i = 0; i < this.#transactionPool.length; i++) {
+            if(fromAddress === this.#transactionPool[i].fromAddress) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

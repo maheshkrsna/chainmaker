@@ -58,8 +58,9 @@ describe('Transaction.js', () => {
 
     describe('Add Transaction to pool', () => {
         beforeEach(() => {
-            transaction._transactionPool = [];
+            transaction.clearTransactionPool();
         });
+
         it('Should verify and add valid transaction to the pool', () => {
             let transactionObject = transaction.createTransaction(FROM_ADDRESS,
                 '0123456789ABCDEF', DATA, PRIVATE_KEY);
@@ -85,7 +86,24 @@ describe('Transaction.js', () => {
 
             sinon.assert.calledWithExactly(transaction.verifyTransaction,
                 transactionObject, transactionObject.fromAddress);
-            transaction._transactionPool.length.should.equal(0);
+            transaction.transactionPool.length.should.equal(0);
+        });
+
+        it('Should not add transactions from an address whose transaction is in pool', () => {
+            transaction.verifyTransaction = sinon.fake.returns(true);
+            let transactionObject = transaction.createTransaction(FROM_ADDRESS,
+                '0123456789ABCDEF', DATA, PRIVATE_KEY);
+            transaction.addTransactionToThePool(transactionObject);
+
+            try {
+                let transactionObject2 = transaction.createTransaction(FROM_ADDRESS,
+                    'ABCDEF0123456789', DATA, PRIVATE_KEY);
+                transaction.addTransactionToThePool(transactionObject2);
+            } catch(e) {
+                // How do u add test case for error checking in mocha?
+            }
+
+            transaction.transactionPool.length.should.equal(1);
         });
     });
 });
