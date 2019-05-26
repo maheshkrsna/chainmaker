@@ -185,7 +185,7 @@ class ChainMaker {
      * @public
      * @description Method to create a Transaction on the Blockchain.
      * @param {String} toAddress Wallet address of the Recipient.
-     * @param {String} data data to be transferred.
+     * @param {Object} data data to be transferred.
      * @returns {Object} this Reference to self to enable method chaining
      */
     createTransaction(toAddress, data) {
