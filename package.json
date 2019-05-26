@@ -51,7 +51,6 @@
     "elliptic": "^6.4.1",
     "events": "^3.0.0",
     "hash.js": "^1.1.7",
-    "localforage": "^1.7.3",
-    "lodash": "^4.17.11"
+    "localforage": "^1.7.3"
   }
 }
