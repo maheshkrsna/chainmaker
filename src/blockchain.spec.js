@@ -38,6 +38,18 @@ describe('Blockchain.js', () => {
             blockChain.addBlock(block);
             blockChain.getBlockchain().length.should.equal(2);
         });
+
+        it('should verify a new block', () => {
+            const transactionObject = transaction.createTransaction(FROM_ADDRESS,
+                'ABCDEF0123456789', DATA, key);
+            const previousBlockHash = blockChain.getLastBlockHash();
+            const difficulty = 1;
+            let block = Block.mineBlock(
+                previousBlockHash, JSON.stringify([transactionObject]), difficulty
+            );
+            let isValidBlock = blockChain.verifyNewBlock(block, difficulty);
+            isValidBlock.should.equal(true);
+        });
     });
 
     describe('on existing blockChain', () => {

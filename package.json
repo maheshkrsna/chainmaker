@@ -1,6 +1,6 @@
 {
   "name": "chainmaker",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "npm module to create blockchain",
   "main": "src/index.js",
   "directories": {

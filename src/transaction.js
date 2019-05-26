@@ -1,3 +1,4 @@
+import constants from './constants';
 import elliptic from 'elliptic';
 import eventEmitter from './blockchainevents';
 import sha256 from 'hash.js/lib/hash/sha/256.js';
@@ -113,9 +114,9 @@ class Transaction {
      */
     addTransactionToThePool(transaction) {
         if (this.#transactionPool.length >= this.#maxTransactionPoolSize) {
-            // broadcast n/w to start mining a block with the current
-            // transactionPool
-            // Reset the transaction Pool and add transaction to it and return
+            // broadcast this transactionPool to enable mining
+            eventEmitter.emit(constants.EVENTS.TRANSACTION_POOL_FILLED, this.transactionPool);
+            this.#transactionPool = [];
         }
         // Here transaction.fromAddress acts as a public key
         let isTransactionValid = this.verifyTransaction(transaction,
@@ -171,7 +172,6 @@ class Transaction {
             this._generateHash(transaction.fromAddress, transaction.toAddress,
                 transaction.data, transaction.timeStamp),
             privateKey);
-        eventEmitter.emit('BLOCKCHAIN_TRANSACTION_CREATED', transaction);
         return transaction;
     }
 

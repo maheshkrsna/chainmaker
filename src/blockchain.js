@@ -1,4 +1,5 @@
 import Block from './block';
+import elliptic from 'elliptic';
 import sha256 from 'hash.js/lib/hash/sha/256.js';
 
 /**
@@ -8,6 +9,8 @@ import sha256 from 'hash.js/lib/hash/sha/256.js';
 class Blockchain {
     #name;
     #chain;
+    #blockchainPrivateKey;
+    #blockchainWalletAddress;
     constructor(name, blockchain) {
         this.#name = name;
         if (blockchain) {
@@ -30,6 +33,35 @@ class Blockchain {
             );
             this.#chain.push(GenesisBlock);
         }
+
+        const EllipticCryptography = elliptic.ec;
+        const ec = new EllipticCryptography('secp256k1');
+        // Blockchain wallet private key will always be `1111...` (64 1's).
+        const blockchainKeyPair = ec.keyFromPrivate(Array(65).join('1'));
+        this.#blockchainPrivateKey = blockchainKeyPair.getPrivate('hex');
+        this.#blockchainWalletAddress = blockchainKeyPair.getPublic('hex');
+    }
+
+    /**
+     * @method blockchainPrivateKey
+     * @memberof Blockchain
+     * @public
+     * @description Gets the blockchain private key.
+     * @returns {String} blockchain private key as hex string
+     */
+    get blockchainPrivateKey() {
+        return this.#blockchainPrivateKey;
+    }
+
+    /**
+     * @method blockchainWalletAddress
+     * @memberof Blockchain
+     * @public
+     * @description Gets the blockchain wallet address.
+     * @returns {String} blockchain wallet address as hex string
+     */
+    get blockchainWalletAddress() {
+        return this.#blockchainWalletAddress;
     }
 
     /**
@@ -175,6 +207,28 @@ class Blockchain {
             }
         }
         return transactions;
+    }
+
+    /**
+     * @method verifyNewBlock
+     * @memberof Blockchain
+     * @public
+     * @description Method to verify newly mined blocks before adding them to the blockchain.
+     * @param {Object} block Newly mined block.
+     * @param {Number} difficulty difficulty of the n/w at the time the block was commissioned.
+     * @returns {boolean} true if it is a valid block else false.
+     */
+    verifyNewBlock(block, difficulty) {
+        let difficultyString = Array(difficulty + 1).join('0');
+        let hash = this._generateHash(block.previousHash,
+            block.data, block.timeStamp, block.nonce);
+        if((this.getLastBlockHash() === block.previousHash)
+        && (hash === block.hash)
+        && (hash.substring(0, difficulty) === difficultyString)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

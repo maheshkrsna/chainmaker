@@ -1,4 +1,3 @@
-import eventEmitter from './blockchainevents';
 import sha256 from 'hash.js/lib/hash/sha/256.js';
 
 /**
@@ -99,7 +98,6 @@ class Block {
         }
 
         block = this.#createBlock(previousHash, data, timeStamp, nonce, hash);
-        eventEmitter.emit('BLOCKCHAIN_BLOCK_MINED', block);
         return block;
     }
 }

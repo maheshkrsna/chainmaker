@@ -1,8 +1,7 @@
 import Block from './block';
 
 describe('Block.js', () => {
-    const DATA = `The Times 03/Jan/2009
-                Chancellor on brink of second bailout for banks`;
+    const DATA = 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks';
     const PREVIOUS_HASH = '0x00';
 
     beforeEach(() => {

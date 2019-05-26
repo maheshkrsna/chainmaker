@@ -30,13 +30,4 @@ describe('Chainmaker', () => {
                 walletAddress);
         });
     });
-
-    describe('Transaction', () => {
-        // chainmaker.createBlockchain();
-        // beforeEach();
-
-        // it('should successfully create a transaction', () => {
-        //TODO: For every wallet created add an initial amount for transaction.
-        // });
-    });
 });
